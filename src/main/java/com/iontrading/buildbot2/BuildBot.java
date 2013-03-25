@@ -30,10 +30,10 @@ public class BuildBot extends PircBot {
     private static final AtomicBoolean START = new AtomicBoolean(true);
 
     public BuildBot() throws Exception {
-        start();
+        // start();
     }
 
-    private void start() throws Exception {
+    public void start() throws Exception {
         setName(NAME);
         setVerbose(true);
 
