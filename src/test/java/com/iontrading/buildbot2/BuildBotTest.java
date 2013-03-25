@@ -1,14 +1,12 @@
 package com.iontrading.buildbot2;
 
-import org.jibble.pircbot.PircBot;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
-
-import static org.powermock.api.mockito.PowerMockito.*;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import static org.powermock.api.mockito.PowerMockito.*;
 
 /**
  * @author A.Jassal
