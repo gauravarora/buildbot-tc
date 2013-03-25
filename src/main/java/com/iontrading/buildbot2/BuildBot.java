@@ -42,7 +42,14 @@ public class BuildBot extends PircBot {
         sendMessage(CHANNEL, Colors.UNDERLINE + "Up & running, will report build status");
     }
 
+    public void reportStatusToIRC() throws Exception {
+        String title = "buildTitle";
+        String link = "buildLink";
+        String status = "buildStatus";
+        sendMessage(CHANNEL, Colors.RED + title + " (" + link + ") [" + status + "]");
+    }
+
     public static void main(String[] args) throws Exception {
-        new BuildBot();
+        new BuildBot().start();
     }
 }
