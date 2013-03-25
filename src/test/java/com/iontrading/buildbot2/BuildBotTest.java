@@ -82,18 +82,36 @@ public class BuildBotTest {
      * @throws Exception the exception
      */
     @Test
-    public void testBotReportsStatusToIRC() throws Exception {
+    public void testBotReportsSuccessStatusToIRC() throws Exception {
         /*
          * This mocking is actually not needed as it is not doing something which can break stuff. But it is a good
-         * practice to add this mock, as this makes the test case agnostoc of the internal implementation of
+         * practice to add this mock, as this makes the test case independent of the internal implementation of
          * sendMessage().
          */
         // doNothing().when((buildBot), "sendMessage", Matchers.anyString(), Matchers.anyString());
         String title = "buildTitle";
         String link = "buildLink";
-        String status = "buildStatus";
-        buildBot.reportStatusToIRC();
+        buildBot.reportSuccessStatusToIRC(title, link);
         verifyPrivate(buildBot).invoke("sendMessage", "#xtp-tests",
-                Colors.RED + title + " (" + link + ") [" + status + "]");
+                Colors.GREEN + title + " (" + link + ") [" + "Success" + "]");
+    }
+
+    /**
+     * Test bot reports failure status to irc.
+     * @throws Exception the exception
+     */
+    @Test
+    public void testBotReportsFailureStatusToIRC() throws Exception {
+        /*
+         * This mocking is actually not needed as it is not doing something which can break stuff. But it is a good
+         * practice to add this mock, as this makes the test case independent of the internal implementation of
+         * sendMessage().
+         */
+        // doNothing().when((buildBot), "sendMessage", Matchers.anyString(), Matchers.anyString());
+        String title = "buildTitle";
+        String link = "buildLink";
+        buildBot.reportFailureStatusToIRC(title, link);
+        verifyPrivate(buildBot).invoke("sendMessage", "#xtp-tests",
+                Colors.RED + title + " (" + link + ") [" + "Failure" + "]");
     }
 }
