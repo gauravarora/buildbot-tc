@@ -1,5 +1,6 @@
 package com.iontrading.buildbot2;
 
+import org.jibble.pircbot.Colors;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +32,6 @@ public class BuildBotTest {
     public void testBotConnectsOnStart() throws Exception {
         buildBot.start();
         verifyPrivate(buildBot).invoke("connect", Matchers.anyString(), Matchers.anyInt());
-
     }
 
     @Test
@@ -40,6 +40,13 @@ public class BuildBotTest {
 
         buildBot.start();
         verifyPrivate(buildBot).invoke("joinChannel", "#xtp-tests");
+    }
 
+    @Test
+    public void testBotSendsMessageOnChannelOnStart() throws Exception {
+        doNothing().when((buildBot), "sendMessage", Matchers.anyString(), Matchers.anyString());
+
+        buildBot.start();
+        verifyPrivate(buildBot).invoke("sendMessage", "#xtp-tests", Colors.UNDERLINE + "Up & running, will report build status");
     }
 }
