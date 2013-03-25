@@ -12,50 +12,30 @@ import org.mockito.Matchers;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-/**
- * The Class BuildBotTest.
- */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(BuildBot.class)
 public class BuildBotTest {
 
-    /** The build bot. */
     private BuildBot buildBot;
 
-    /**
-     * Before method.
-     * @throws Exception the exception
-     */
     @Before
     public void beforeMethod() throws Exception {
         buildBot = spy(new BuildBot());
         doNothing().when((buildBot), "connect", Matchers.anyString(), Matchers.anyInt());
     }
 
-    /**
-     * Test name is set on start.
-     * @throws Exception the exception
-     */
     @Test
     public void testNameIsSetOnStart() throws Exception {
         buildBot.start();
         verifyPrivate(buildBot).invoke("setName", "buildbot2");
     }
 
-    /**
-     * Test bot connects on start.
-     * @throws Exception the exception
-     */
     @Test
     public void testBotConnectsOnStart() throws Exception {
         buildBot.start();
         verifyPrivate(buildBot).invoke("connect", Matchers.anyString(), Matchers.anyInt());
     }
 
-    /**
-     * Test bot joins our channel on start.
-     * @throws Exception the exception
-     */
     @Test
     public void testBotJoinsOurChannelOnStart() throws Exception {
         doNothing().when((buildBot), "joinChannel", Matchers.anyString());
@@ -64,10 +44,6 @@ public class BuildBotTest {
         verifyPrivate(buildBot).invoke("joinChannel", "#xtp-tests");
     }
 
-    /**
-     * Test bot sends message on channel on start.
-     * @throws Exception the exception
-     */
     @Test
     public void testBotSendsMessageOnChannelOnStart() throws Exception {
         doNothing().when((buildBot), "sendMessage", Matchers.anyString(), Matchers.anyString());
@@ -77,10 +53,6 @@ public class BuildBotTest {
                 Colors.UNDERLINE + "Up & running, will report build status");
     }
 
-    /**
-     * Test bot reports status to irc.
-     * @throws Exception the exception
-     */
     @Test
     public void testBotReportsSuccessStatusToIRC() throws Exception {
         /*
@@ -96,10 +68,6 @@ public class BuildBotTest {
                 Colors.GREEN + title + " (" + link + ") [" + "Success" + "]");
     }
 
-    /**
-     * Test bot reports failure status to irc.
-     * @throws Exception the exception
-     */
     @Test
     public void testBotReportsFailureStatusToIRC() throws Exception {
         /*
@@ -113,5 +81,32 @@ public class BuildBotTest {
         buildBot.reportFailureStatusToIRC(title, link);
         verifyPrivate(buildBot).invoke("sendMessage", "#xtp-tests",
                 Colors.RED + title + " (" + link + ") [" + "Failure" + "]");
+    }
+
+    @Test
+    public void testBotReportsAllUnreportedStatusToUserWhenPrivateChatIsStarted() throws Exception {
+        String user = "user";
+        String login = "login";
+        String hostname = "hostname";
+        String message = "message";
+
+        String title = "buildTitle";
+        String link = "buildLink";
+        buildBot.reportSuccessStatusToIRC(title, link);
+        buildBot.reportFailureStatusToIRC(title, link);
+        String title2 = "buildTitle2";
+        String link2 = "buildLink2";
+        buildBot.reportSuccessStatusToIRC(title2, link2);
+        buildBot.reportFailureStatusToIRC(title2, link2);
+
+        // Now on Private message should send all messages to bot.
+        buildBot.onPrivateMessage(user, login, hostname, message);
+        verifyPrivate(buildBot).invoke("sendMessage", user, Colors.RED + title + " (" + link + ") [" + "Failure" + "]");
+        verifyPrivate(buildBot).invoke("sendMessage", user,
+                Colors.GREEN + title + " (" + link + ") [" + "Success" + "]");
+        verifyPrivate(buildBot).invoke("sendMessage", user,
+                Colors.RED + title2 + " (" + link2 + ") [" + "Failure" + "]");
+        verifyPrivate(buildBot).invoke("sendMessage", user,
+                Colors.GREEN + title2 + " (" + link2 + ") [" + "Success" + "]");
     }
 }

@@ -42,33 +42,14 @@ public class BuildBot extends PircBot {
         sendMessage(CHANNEL, Colors.UNDERLINE + "Up & running, will report build status");
     }
 
-    /**
-     * Report status to irc.
-     * @param title the title
-     * @param link the link
-     * @throws Exception the exception
-     */
     public void reportFailureStatusToIRC(final String title, final String link) throws Exception {
         sendMessage(CHANNEL, Colors.RED + populateMessage(title, link, "Failure"));
     }
 
-    /**
-     * Report success status to irc.
-     * @param title the title
-     * @param link the link
-     * @throws Exception the exception
-     */
     public void reportSuccessStatusToIRC(final String title, final String link) throws Exception {
         sendMessage(CHANNEL, Colors.GREEN + populateMessage(title, link, "Success"));
     }
 
-    /**
-     * Populate message.
-     * @param title the title
-     * @param link the link
-     * @param status the status
-     * @return the string
-     */
     private String populateMessage(final String title, final String link, final String status) {
         return title + " (" + link + ") [" + status + "]";
     }
@@ -76,4 +57,14 @@ public class BuildBot extends PircBot {
     public static void main(String[] args) throws Exception {
         new BuildBot().start();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void onPrivateMessage(String sender, String login, String hostname, String message) {
+        super.onPrivateMessage(sender, login, hostname, message);
+
+    }
+
 }
