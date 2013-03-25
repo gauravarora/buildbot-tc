@@ -14,16 +14,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jibble.pircbot.Colors;
-import org.jibble.pircbot.PircBot;
+import org.pircbotx.Colors;
+import org.pircbotx.PircBotX;
+import org.pircbotx.hooks.Event;
+import org.pircbotx.hooks.Listener;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
 import com.iontrading.model.Build;
 import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.XmlReader;
 import com.sun.syndication.io.impl.Base64;
 
 /**
@@ -31,7 +30,7 @@ import com.sun.syndication.io.impl.Base64;
  * @version $Id$
  * @since 0.7.6
  */
-public class Bot extends PircBot {
+public class Bot extends PircBotX implements Listener<Bot> {
 
     private static final String CHANNEL = "#xtp-tests";
 
@@ -117,12 +116,6 @@ public class Bot extends PircBot {
         }, 1, 120, TimeUnit.SECONDS);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected void onMessage(String channel, String sender, String login, String hostname, String message) {
-        super.onMessage(channel, sender, login, hostname, message);
-    }
-
     private static final List<SyndEntry> getFails() throws Exception {
         List<SyndEntry> entries = new ArrayList<SyndEntry>();
         for (SyndEntry entry : getBuilds()) {
@@ -143,32 +136,36 @@ public class Bot extends PircBot {
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void onPrivateMessage(String sender, String login, String hostname, String message) {
-        super.onPrivateMessage(sender, login, hostname, message);
-        if (message.equals("!fails")) {
-            try {
-                for (SyndEntry entry : getFails()) {
-                    sendMessage(CHANNEL, entry.getTitle() + "(" + entry.getLink() + ")");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (message.equals("!checkbuild")) {
-            System.out.println("check builds");
-            try {
-                URL url = new URL("http://192.168.150.38/httpAuth/app/rest/builds/id:875130");
-                HttpURLConnection httpcon = (HttpURLConnection) url.openConnection();
-                String encoded = Base64.encode("garora:gaurav");
-                httpcon.setRequestProperty("Authorization", "Basic " + encoded);
+//    @Override
+//    protected void onPrivateMessage(String sender, String login, String hostname, String message) {
+//        super.onPrivateMessage(sender, login, hostname, message);
+//        if (message.equals("!fails")) {
+//            try {
+//                for (SyndEntry entry : getFails()) {
+//                    sendMessage(CHANNEL, entry.getTitle() + "(" + entry.getLink() + ")");
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        } else if (message.equals("!checkbuild")) {
+//            System.out.println("check builds");
+//            try {
+//                URL url = new URL("http://192.168.150.38/httpAuth/app/rest/builds/id:875130");
+//                HttpURLConnection httpcon = (HttpURLConnection) url.openConnection();
+//                String encoded = Base64.encode("garora:gaurav");
+//                httpcon.setRequestProperty("Authorization", "Basic " + encoded);
+//
+//                Serializer serializer = new Persister();
+//                Build build = serializer.read(Build.class, httpcon.getInputStream());
+//                System.out.println(build.getStatusText());
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
-                Serializer serializer = new Persister();
-                Build build = serializer.read(Build.class, httpcon.getInputStream());
-                System.out.println(build.getStatusText());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
+    /** {@inheritDoc} */
+    public void onEvent(Event<Bot> event) throws Exception {
+        System.out.println(event);
     }
 }
