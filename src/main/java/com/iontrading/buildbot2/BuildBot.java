@@ -68,17 +68,18 @@ public class BuildBot extends ListenerAdapter {
 
     public void reportFailureStatusToIRC(final String title, final String link) throws Exception {
         String message = Colors.RED + populateMessage(title, link, "Failure");
-        sendMessage(CHANNEL, message);
+        bot.sendMessage(CHANNEL, message);
         messagesSentToIRC.add(message);
     }
 
     public void reportSuccessStatusToIRC(final String title, final String link) throws Exception {
         String message = Colors.GREEN + populateMessage(title, link, "Success");
-        sendMessage(CHANNEL, message);
+        bot.sendMessage(CHANNEL, message);
         messagesSentToIRC.add(message);
     }
 
     private String populateMessage(final String title, final String link, final String status) {
+        return title + " (" + link + ") [" + status + "]";
     }
 
 }
