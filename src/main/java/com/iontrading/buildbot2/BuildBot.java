@@ -20,13 +20,15 @@ public class BuildBot extends ListenerAdapter {
 
     private final List<String> messagesSentToIRC;
 
-    public BuildBot(final PircBotX botX) throws Exception {
+    private final IQuery query;
+
+    public BuildBot(PircBotX botX, IQuery query) throws Exception {
         this.bot = botX;
+        this.query = query;
         messagesSentToIRC = new ArrayList<String>();
     }
 
     public void start() throws Exception {
-
         // This class is a listener, so add it to the bots known listeners
         bot.getListenerManager().addListener(this);
 
@@ -35,10 +37,11 @@ public class BuildBot extends ListenerAdapter {
 
         bot.connect("192.168.45.44", 6697);
         bot.joinChannel(CHANNEL);
+        bot.sendMessage(CHANNEL, Colors.UNDERLINE + "Up & running, will report build status");
     }
 
     public static void main(String[] args) throws Exception {
-        BuildBot bot = new BuildBot(new PircBotX());
+        BuildBot bot = new BuildBot(new PircBotX(), new Query());
         bot.start();
     }
 
@@ -56,6 +59,7 @@ public class BuildBot extends ListenerAdapter {
     @Override
     public void onPrivateMessage(PrivateMessageEvent event) throws Exception {
         super.onPrivateMessage(event);
+        query.queryFails();
     }
 
     /**

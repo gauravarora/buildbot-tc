@@ -4,14 +4,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.pircbotx.Colors;
 import org.pircbotx.PircBotX;
+import org.pircbotx.hooks.events.PrivateMessageEvent;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.powermock.api.mockito.PowerMockito.doNothing;
-import static org.powermock.api.mockito.PowerMockito.spy;
-import static org.powermock.api.mockito.PowerMockito.verifyPrivate;
+import static org.powermock.api.mockito.PowerMockito.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(BuildBot.class)
@@ -21,10 +21,13 @@ public class BuildBotTest {
 
     private BuildBot bb;
 
+    private IQuery query;
+
     @Before
     public void beforeMethod() throws Exception {
         buildBot = spy(new PircBotX());
-        bb = new BuildBot(buildBot);
+        query = Mockito.mock(IQuery.class);
+        bb = new BuildBot(buildBot, query);
         doNothing().when((buildBot), "connect", Matchers.anyString(), Matchers.anyInt());
     }
 
@@ -55,5 +58,12 @@ public class BuildBotTest {
         bb.start();
         verifyPrivate(buildBot).invoke("sendMessage", "#xtp-tests",
                 Colors.UNDERLINE + "Up & running, will report build status");
+    }
+
+    @Test
+    public void testBotQueriesForFailingTestsOnPriveMessage() throws Exception {
+        PrivateMessageEvent<PircBotX> event = new PrivateMessageEvent<PircBotX>(buildBot, null, "some message");
+        bb.onPrivateMessage(event);
+        Mockito.verify(query).queryFails();
     }
 }
