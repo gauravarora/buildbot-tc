@@ -81,9 +81,4 @@ public class BuildBot extends ListenerAdapter {
     public void onJoin(JoinEvent event) throws Exception {
         event.respond(Colors.UNDERLINE + "Up & running, will report build status");
     }
-
-    private String populateMessage(final String title, final String link, final String status) {
-        return title + " (" + link + ") [" + status + "]";
-    }
-
 }
