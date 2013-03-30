@@ -1,6 +1,7 @@
 package com.iontrading.buildbot2;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.pircbotx.Colors;
@@ -9,6 +10,8 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 import org.pircbotx.hooks.events.PrivateMessageEvent;
+
+import com.iontrading.model.Build;
 
 public class BuildBot extends ListenerAdapter {
 
@@ -41,7 +44,7 @@ public class BuildBot extends ListenerAdapter {
     }
 
     public static void main(String[] args) throws Exception {
-        BuildBot bot = new BuildBot(new PircBotX(), new Query());
+        BuildBot bot = new BuildBot(new PircBotX(), new TeamcityQuery());
         bot.start();
     }
 
@@ -59,7 +62,10 @@ public class BuildBot extends ListenerAdapter {
     @Override
     public void onPrivateMessage(PrivateMessageEvent event) throws Exception {
         super.onPrivateMessage(event);
-        query.queryFails();
+        Collection<Build> fails = query.queryFails();
+        for (Build build : fails) {
+            bot.sendAction(event.getUser(), build.getStatusText());
+        }
     }
 
     /**
@@ -68,18 +74,6 @@ public class BuildBot extends ListenerAdapter {
     @Override
     public void onJoin(JoinEvent event) throws Exception {
         event.respond(Colors.UNDERLINE + "Up & running, will report build status");
-    }
-
-    public void reportFailureStatusToIRC(final String title, final String link) throws Exception {
-        String message = Colors.RED + populateMessage(title, link, "Failure");
-        bot.sendMessage(CHANNEL, message);
-        messagesSentToIRC.add(message);
-    }
-
-    public void reportSuccessStatusToIRC(final String title, final String link) throws Exception {
-        String message = Colors.GREEN + populateMessage(title, link, "Success");
-        bot.sendMessage(CHANNEL, message);
-        messagesSentToIRC.add(message);
     }
 
     private String populateMessage(final String title, final String link, final String status) {
