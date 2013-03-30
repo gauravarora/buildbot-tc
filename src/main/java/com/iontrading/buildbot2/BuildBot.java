@@ -62,8 +62,14 @@ public class BuildBot extends ListenerAdapter {
     @Override
     public void onPrivateMessage(PrivateMessageEvent event) throws Exception {
         super.onPrivateMessage(event);
-        Collection<Build> fails = query.queryFails();
-        for (Build build : fails) {
+        Collection<Build> builds = null;
+        if ("!fails".equalsIgnoreCase(event.getMessage())) {
+            builds = query.queryFails();
+        } else if ("!list".equalsIgnoreCase(event.getMessage())) {
+            builds = query.queryAll();
+        }
+
+        for (Build build : builds) {
             bot.sendAction(event.getUser(), build.getStatusText());
         }
     }

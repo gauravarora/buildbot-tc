@@ -10,4 +10,9 @@ public class TeamcityQuery implements IQuery {
         return null;
     }
 
+    /** {@inheritDoc} */
+    public Collection<Build> queryAll() {
+        return null;
+    }
+
 }

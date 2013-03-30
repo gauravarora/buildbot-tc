@@ -59,13 +59,13 @@ public class BuildBotTest {
     public void testBotSendsMessageOnChannelOnStart() throws Exception {
         doNothing().when(buildBot).sendMessage(anyString(), anyString());
 
+        String message = Colors.UNDERLINE + "Up & running, will report build status";
         bb.start();
-        verify(buildBot).sendMessage("#xtp-tests",
-                Colors.UNDERLINE + "Up & running, will report build status");
+        verify(buildBot).sendMessage("#xtp-tests", message);
     }
 
     @Test
-    public void testBotReportsFailingTestsOnPriveMessage() throws Exception {
+    public void testBotReportsFailingTestsOnPrivateMessage() throws Exception {
         User user = mock(User.class);
         Build build = mock(Build.class);
         String statusTxt = "Status text for test build";
@@ -74,10 +74,28 @@ public class BuildBotTest {
         when(query.queryFails()).thenReturn(builds);
         when(build.getStatusText()).thenReturn(statusTxt);
 
-        PrivateMessageEvent<PircBotX> event = new PrivateMessageEvent<PircBotX>(buildBot, user, "some message");
+        PrivateMessageEvent<PircBotX> event = new PrivateMessageEvent<PircBotX>(buildBot, user, "!fails");
         bb.onPrivateMessage(event);
 
         verify(query).queryFails();
-        verify(buildBot).sendAction(user, statusTxt);
+        verify(buildBot, times(1)).sendAction(user, statusTxt);
     }
+
+    @Test
+    public void testBotReportsAllTestsOnPrivateMessage() throws Exception {
+        User user = mock(User.class);
+        Build build = mock(Build.class);
+
+        Build build2 = mock(Build.class);
+
+        Collection<Build> builds = Lists.newArrayList(build, build2);
+        when(query.queryAll()).thenReturn(builds);
+
+        PrivateMessageEvent<PircBotX> event = new PrivateMessageEvent<PircBotX>(buildBot, user, "!list");
+        bb.onPrivateMessage(event);
+
+        verify(query).queryAll();
+        verify(buildBot, times(2)).sendAction(isA(User.class), anyString());
+    }
+
 }

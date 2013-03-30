@@ -8,4 +8,6 @@ public interface IQuery {
 
     Collection<Build> queryFails();
 
+    Collection<Build> queryAll();
+
 }
