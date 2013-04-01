@@ -7,8 +7,6 @@ import java.util.List;
 
 import com.iontrading.buildbot.App;
 import com.iontrading.model.Build;
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndEntry;
 
 public class TeamcityQuery implements IQuery {
 
@@ -26,12 +24,10 @@ public class TeamcityQuery implements IQuery {
      */
     public Collection<Build> queryFails() {
         List<Build> entries = new ArrayList<Build>();
-        List<SyndEntry> allBuilds = feedReader.getBuilds();
-        for (SyndEntry entry : allBuilds) {
-            if (entry.getAuthor().contains("Failed")) {
-                Build b = new Build();
-                b.setStatusText("FailedBuild");
-                entries.add(b);
+        List<Build> allBuilds = feedReader.getBuilds();
+        for (Build entry : allBuilds) {
+            if (entry.isFailure()) {
+                entries.add(entry);
             }
         }
         return entries;
@@ -39,14 +35,8 @@ public class TeamcityQuery implements IQuery {
 
     /** {@inheritDoc} */
     public Collection<Build> queryAll() {
-        List<Build> entries = new ArrayList<Build>();
-        List<SyndEntry> allBuilds = feedReader.getBuilds();
-        for (final SyndEntry entry : allBuilds) {
-            Build b = new Build();
-            b.setStatusText("Build");
-            entries.add(b);
-        }
-        return entries;
+        List<Build> allBuilds = feedReader.getBuilds();
+        return allBuilds;
     }
 
 }

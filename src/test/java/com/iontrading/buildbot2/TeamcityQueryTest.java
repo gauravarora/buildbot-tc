@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 import com.iontrading.model.Build;
-import com.sun.syndication.feed.synd.SyndEntry;
 
 public class TeamcityQueryTest {
 
@@ -29,12 +28,12 @@ public class TeamcityQueryTest {
 
     @Test
     public void testQueryFailsReturnsFailedBuilds() throws Exception {
-        SyndEntry successBuild = mock(SyndEntry.class);
-        when(successBuild.getAuthor()).thenReturn("Success");
-        SyndEntry failedBuild = mock(SyndEntry.class);
-        when(failedBuild.getAuthor()).thenReturn("Failed");
+        Build successBuild = mock(Build.class);
+        when(successBuild.isFailure()).thenReturn(false);
+        Build failedBuild = mock(Build.class);
+        when(failedBuild.isFailure()).thenReturn(true);
 
-        List<SyndEntry> expectedBuilds = Lists.newArrayList(successBuild, failedBuild);
+        List<Build> expectedBuilds = Lists.newArrayList(successBuild, failedBuild);
         when(feedReader.getBuilds()).thenReturn(expectedBuilds);
         Collection<Build> builds = query.queryFails();
         verify(feedReader).getBuilds();
@@ -44,10 +43,10 @@ public class TeamcityQueryTest {
 
     @Test
     public void testQueryFailsReturnsNoBuilds() throws Exception {
-        SyndEntry successBuild = mock(SyndEntry.class);
-        when(successBuild.getAuthor()).thenReturn("Success");
+        Build successBuild = mock(Build.class);
+        when(successBuild.isFailure()).thenReturn(false);
 
-        List<SyndEntry> expectedBuilds = Lists.newArrayList(successBuild);
+        List<Build> expectedBuilds = Lists.newArrayList(successBuild);
         when(feedReader.getBuilds()).thenReturn(expectedBuilds);
         Collection<Build> builds = query.queryFails();
         verify(feedReader).getBuilds();

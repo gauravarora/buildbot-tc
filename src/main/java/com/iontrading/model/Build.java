@@ -14,6 +14,9 @@ public class Build {
     @Element
     private String statusText;
 
+    @Element
+    private Boolean failure;
+
     /**
      * @return the statusText
      */
@@ -27,4 +30,19 @@ public class Build {
     public void setStatusText(String statusText) {
         this.statusText = statusText;
     }
+
+    /**
+     * @return the failure
+     */
+    public Boolean isFailure() {
+        return failure;
+    }
+
+    /**
+     * @param failure the failure to set
+     */
+    public void setFailure(final Boolean failure) {
+        this.failure = failure;
+    }
+
 }
