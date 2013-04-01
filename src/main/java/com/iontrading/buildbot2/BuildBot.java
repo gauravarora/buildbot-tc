@@ -44,7 +44,7 @@ public class BuildBot extends ListenerAdapter {
     }
 
     public static void main(String[] args) throws Exception {
-        BuildBot bot = new BuildBot(new PircBotX(), new TeamcityQuery());
+        BuildBot bot = new BuildBot(new PircBotX(), new TeamcityQuery(new FeedReaderImpl()));
         bot.start();
     }
 
