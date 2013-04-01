@@ -1,7 +1,13 @@
 package com.iontrading.buildbot2;
 
-import org.junit.Before;
+import java.util.Collection;
 
+import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.iontrading.model.Build;
 
 public class TeamcityQueryTest {
 
@@ -10,5 +16,11 @@ public class TeamcityQueryTest {
     @Before
     public void beforeMethod() throws Exception {
         query = new TeamcityQuery();
+    }
+
+    @Test
+    public void testQueryFailsReturnsFailedBuilds() throws Exception {
+        Collection<Build> builds = query.queryFails();
+        Assert.assertNotNull(builds);
     }
 }
